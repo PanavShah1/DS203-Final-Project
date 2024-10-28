@@ -98,5 +98,5 @@ def run(num):
     cov_matrix = df5.cov()
     cov_matrix.to_csv(f"cov-matrix/{num:02d}-cov.csv")
 
-for i in range(78, 116):
+for i in range(117, 118):
     run(i)
