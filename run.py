@@ -77,26 +77,7 @@ def run(num):
     df2.columns = df2.columns.astype(int)
 
 
+    df2.to_csv(f"cleaned-MFCC/{num:02d}-MFCC.csv", index=False, header=False)
 
-    df3 = df2.copy()
-
-    def standardization_column(n):
-        mean = df2[n].mean()
-        std = df2[n].std()
-        df3[n] = (df2[n] - mean) / std
-
-    for i in range(0):
-        standardization_column(i)
-
-    df4 = df3.copy()
-    df4 = df4.transpose()
-    df4.head()
-
-    df5 = df4.copy()
-    df5 = df5.transpose()
-
-    cov_matrix = df5.cov()
-    cov_matrix.to_csv(f"cov-matrix/{num:02d}-cov.csv")
-
-for i in range(117, 118):
+for i in range(26, 118):
     run(i)

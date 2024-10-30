@@ -1,18 +1,22 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-import pandas as pd
+
+PATH = Path('mean-var/')
+TYPE = 'mean_var'
+SIZE = 20
 
 X = []
 y = []
 
-for i in range(1, 117):
+for i in range(1, 118):
     # Read CSV, skipping the first row as header and the first column as index
-    df = pd.read_csv(f'cov-matrix/{i:02d}-cov.csv', header=0, index_col=0)
+    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', header=0, index_col=0)
     df_np = df.to_numpy()
-    if df_np.size == 400:  # Adjust this number based on your data
-        df_reshape = df_np.reshape((1, 400))
+    if df_np.size == SIZE:  # Adjust this number based on your data
+        df_reshape = df_np.reshape((1, SIZE))
         print("Reshaped array:", df_reshape)
         X.append(df_reshape)
     else:
@@ -23,17 +27,12 @@ X = X.squeeze(axis=1)
 print(X.shape)
 
 from sklearn.cluster import KMeans
-
-# kmeans = KMeans(n_clusters=6, random_state=0).fit(X)
-# print("\n".join([f"{i+1} : {list(kmeans.labels_)[i]}" for i in range(len(kmeans.labels_))]))
-# plt.scatter(X[:, 0], X[:, 100], c=kmeans.labels_, s=50, cmap='viridis')
-
 from sklearn.decomposition import PCA
 
 pca = PCA(n_components=3)
 reduced_data = pca.fit_transform(X)
 
-kmeans = KMeans(n_clusters=6, random_state=0).fit(X)
+kmeans = KMeans(n_clusters=7, random_state=0).fit(X)
 print("\n".join([f"{i+1} : {list(kmeans.labels_)[i]}" for i in range(len(kmeans.labels_))]))
 
 # Create a figure with three subplots
