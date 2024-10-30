@@ -6,21 +6,21 @@ from pathlib import Path
 
 PATH = Path('mean-var/')
 TYPE = 'mean_var'
-SIZE = 20
+SIZE = 160
+N_CLUSTERS = 7
 
 X = []
 y = []
 
-for i in range(1, 118):
-    # Read CSV, skipping the first row as header and the first column as index
-    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', header=0, index_col=0)
+for i in range(1, 117):
+    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', header=0)
     df_np = df.to_numpy()
     if df_np.size == SIZE:  # Adjust this number based on your data
         df_reshape = df_np.reshape((1, SIZE))
         print("Reshaped array:", df_reshape)
         X.append(df_reshape)
     else:
-        print(f"Unexpected size: {df_np.size}. Cannot reshape to (1, 400).")
+        print(f"Unexpected size: {df_np.size}. Cannot reshape to (1, {SIZE}).")
 
 X = np.array(X)
 X = X.squeeze(axis=1)
@@ -32,8 +32,10 @@ from sklearn.decomposition import PCA
 pca = PCA(n_components=3)
 reduced_data = pca.fit_transform(X)
 
-kmeans = KMeans(n_clusters=7, random_state=0).fit(X)
+kmeans = KMeans(n_clusters=N_CLUSTERS, random_state=0).fit(X)
 print("\n".join([f"{i+1} : {list(kmeans.labels_)[i]}" for i in range(len(kmeans.labels_))]))
+print()
+print([len(kmeans.labels_[kmeans.labels_ == i]) for i in range(N_CLUSTERS)])
 
 # Create a figure with three subplots
 fig = plt.figure(figsize=(25, 6))
