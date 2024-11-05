@@ -40,8 +40,7 @@ def get_n_seconds(num, n):
     df2 = (df2 - df2.min()) / (df2.max() - df2.min())
 
     # Save to CSV
-    df2.to_csv(f'start-mean-var/{num:02d}-mean_var.csv', index=False)
+    df2.to_csv(f'start-mean-var-15/{num:02d}-mean_var.csv', index=False)
 
-# for i in range(1, 117):
-#     get_n_seconds(i, 450)
-get_n_seconds(16, 450)
+for i in range(1, 117):
+    get_n_seconds(i, 1300)
