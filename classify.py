@@ -6,17 +6,28 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from check_accuracy import check_accuracy, format_accuracy
 
+# mean-var, mean_var, 160
+# start-mean-var-5, mean_var, 160
+# start-mean-var-10, mean_var, 160
+# start-mean-var-15, mean_var, 160
+# start-mean-var-20, mean_var, 160
+# mean-var-60-sec, mean_var, 160
+# MFCC-shortend, MFCC-reduced, 400
+# MFCC-PCA, PCA, 400  ** - main clustering
+# MFCC-TSNE, MFCC-TSNE-Clustered, 400
 
-PATH = Path('start-mean-var-15/')
-TYPE = 'mean_var'
-SIZE = 160
+PATH = Path('MFCC-PCA/')
+TYPE = 'PCA'
+SIZE = 400
 N_CLUSTERS = 6
+HEADER = None
 
 X = []
 y = []
 
 for i in range(1, 117):
-    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', header=0)
+    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', index_col=False, header=HEADER)
+    print(len(df))
     df.fillna(0, inplace=True)
     df_np = df.to_numpy()
     if df_np.size == SIZE:
@@ -27,6 +38,11 @@ for i in range(1, 117):
 
 X = np.array(X)
 X = X.squeeze(axis=1)
+
+
+# Sort data based on the first column in descending order
+# X_sorted = X[np.argsort(X[:, 0])]
+
 
 pca = PCA(n_components=3)
 reduced_data = pca.fit_transform(X)
@@ -63,7 +79,7 @@ ax3.set_title('PCA - 1D Visualization of Clusters')
 ax3.set_xlabel('PC 1')
 
 # Legend for clusters
-handles = [plt.Line2D([0], [0], marker='o', color='w', label=str(label),
+handles = [plt.Line2D([0], [0], marker='o', color='w', label=str(label+1),
                        markersize=10, markerfacecolor=scatter1.cmap(scatter1.norm(label))) for label in range(N_CLUSTERS)]
 fig.legend(handles=handles, title='Cluster Labels', loc='upper right')
 

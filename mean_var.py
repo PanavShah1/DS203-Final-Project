@@ -4,16 +4,17 @@ from scipy.stats import skew, kurtosis
 from pathlib import Path
 from tqdm import tqdm
 
-PATH = Path('cleaned-MFCC/')
+PATH = Path('MFCC-len-60-sec/')
+SAVE_TO_PATH = Path('mean-var-60-sec/')
 
 def mean_var(num):
     df = pd.read_csv(PATH / f'{num:02d}-MFCC.csv')
     df = df.transpose()
+    # print(df.head())
     COLS = len(df.columns)
     print(COLS)
 
     df2 = pd.DataFrame()
-    a
     # Calculate mean and variance
     df2['mean'] = df.mean(axis=1)
     df2['var'] = df.var(axis=1)
@@ -31,10 +32,13 @@ def mean_var(num):
     delta2_df = delta_df.diff().fillna(0)
     df2['delta2_mean'] = delta2_df.mean(axis=1)
     df2['delta2_var'] = delta2_df.var(axis=1)
+
+    # Normalize each column to a 0-1 range
+    df2 = (df2 - df2.min()) / (df2.max() - df2.min())
     
     # Save to CSV
-    df2.to_csv(f'mean-var/{num:02d}-mean_var.csv', index=False)
+    df2.to_csv(SAVE_TO_PATH / f'{num:02d}-mean_var.csv', index=False)
 
 # Process each file
-for i in tqdm(range(1, 118)):
+for i in tqdm(range(1, 117)):
     mean_var(i)

@@ -4,11 +4,12 @@ from scipy.stats import skew, kurtosis
 from pathlib import Path
 from tqdm import tqdm
 
-PATH = Path('cleaned-MFCC/')
+PATH = Path('MFCC-files/')
 
 def get_n_seconds(num, n):
-    df = pd.read_csv(PATH / f'{num:02d}-MFCC.csv')
-    df = df.transpose()
+    df = pd.read_csv(PATH / f'{num:02d}-MFCC.csv', index_col=False, header=None)
+    # df = df.transpose()
+    # print(df.head())
     COLS = len(df.columns)
     df = df.iloc[:, :n]
     print(COLS)
@@ -37,10 +38,12 @@ def get_n_seconds(num, n):
     df2['delta2_var'] = delta2_df.var(axis=1)
     
     # Normalize each column to a 0-1 range
-    df2 = (df2 - df2.min()) / (df2.max() - df2.min())
+    # df2 = (df2 - df2.min()) / (df2.max() - df2.min())
 
     # Save to CSV
     df2.to_csv(f'start-mean-var-15/{num:02d}-mean_var.csv', index=False)
 
 for i in range(1, 117):
-    get_n_seconds(i, 1300)
+    get_n_seconds(i, 430*3)
+
+# get_n_seconds(1, 430*3)

@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+from pathlib import Path
+from sklearn.manifold import TSNE
+from sklearn.metrics import pairwise_distances
+
+# Paths to input and output directories
+PATH = Path('MFCC-shortened/')
+PATH_SAVE = Path('MFCC-TSNE/')
+PATH_SAVE.mkdir(exist_ok=True)  # Create output directory if it doesn't exist
+
+# Parameters
+tsne_components = 2  # Dimensionality reduction to 2D for easier selection
+num_top_rows = 20  # Number of most independent rows to retain
+
+def select_top_rows_with_tsne(index):
+    # Load the file based on the index
+    filename = f'{index:02d}-MFCC-shortened.csv'
+    df = pd.read_csv(PATH / filename, header=None, index_col=False)
+
+    # Apply t-SNE for dimensionality reduction
+    tsne = TSNE(n_components=tsne_components, random_state=0)
+    tsne_result = tsne.fit_transform(df)
+
+    # Calculate pairwise distances between all rows in the t-SNE space
+    distances = pairwise_distances(tsne_result)
+
+    # For each row, calculate the sum of distances to all other rows (this can represent how isolated a row is)
+    row_distances = distances.sum(axis=1)
+
+    # Select the top 20 most independent rows (the ones with the largest sum of distances)
+    top_20_indices = np.argsort(row_distances)[-num_top_rows:]
+
+    # Select the most independent rows based on the distance
+    df_reduced = df.iloc[top_20_indices].reset_index(drop=True)
+
+    # Save the result
+    output_filename = f'{index:02d}-MFCC-TSNE-Clustered.csv'
+    df_reduced.to_csv(PATH_SAVE / output_filename, index=False, header=False)
+    print(f"Top 20 independent rows saved for file {index:02d}.")
+
+# Loop through files by index
+for i in range(1, 117):  # Adjust the range as needed for the number of files
+    select_top_rows_with_tsne(i)
