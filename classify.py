@@ -5,6 +5,7 @@ from pathlib import Path
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from check_accuracy import check_accuracy, format_accuracy
+from sklearn.metrics import silhouette_score
 
 # mean-var, mean_var, 160
 # start-mean-var-5, mean_var, 160
@@ -12,7 +13,7 @@ from check_accuracy import check_accuracy, format_accuracy
 # start-mean-var-15, mean_var, 160
 # start-mean-var-20, mean_var, 160
 # mean-var-60-sec, mean_var, 160
-# MFCC-shortend, MFCC-reduced, 400
+# MFCC-shortened, MFCC-reduced, 400
 # MFCC-PCA, PCA, 400  ** - main clustering
 # MFCC-TSNE, MFCC-TSNE-Clustered, 400
 
@@ -26,7 +27,7 @@ X = []
 y = []
 
 for i in range(1, 117):
-    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', index_col=False, header=HEADER)
+    df = pd.read_csv(PATH / f'{i:02d}-{TYPE}.csv', index_col=False, header=None)
     print(len(df))
     df.fillna(0, inplace=True)
     df_np = df.to_numpy()
@@ -87,6 +88,11 @@ fig.legend(handles=handles, title='Cluster Labels', loc='upper right')
 accuracy_output = check_accuracy(kmeans.labels_)
 print(format_accuracy(accuracy_output))
 
+# Silhouette Score
+sil_score = silhouette_score(X, kmeans.labels_)
+print(f"Silhouette Score: {sil_score}")
 # Show the plot
 plt.tight_layout()
 plt.show()
+
+
